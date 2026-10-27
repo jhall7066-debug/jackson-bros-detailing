@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CRM | Jackson Bros</title>
+  <link rel="icon" href="../assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0b0e; --panel: #15181e; --field: #0d0f13; --line: #262b34;
+      --ink: #eef0f3; --slate: #9ea5b1; --muted: #6b7280; --accent: #6F8CFF; --accent-2: #8ED8FF; --pink: var(--accent); --blue: var(--accent-2);
+      --green: #5fd39a; --red: #f07a7a; --r: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { background: var(--bg); color: var(--ink); font: 15px/1.5 Inter, system-ui, sans-serif; min-height: 100vh; }
+    h1, h2, h3 { font-family: Sora, Inter, sans-serif; letter-spacing: -0.02em; font-weight: 600; }
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    .hidden { display: none !important; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+    .sub { color: var(--slate); font-size: 0.88rem; }
+
+    /* Sign-in and setup screens */
+    .center { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+    .center .card { width: 100%; max-width: 400px; padding: 32px 28px; text-align: center; }
+    .center img { width: 76px; margin-bottom: 10px; }
+    .center p { color: var(--slate); font-size: 0.9rem; margin: 6px 0 22px; }
+    .center ol { text-align: left; color: var(--slate); font-size: 0.9rem; padding-left: 20px; display: grid; gap: 6px; }
+    .center code { color: var(--pink); }
+    label.f { display: block; text-align: left; font-size: 0.82rem; font-weight: 600; color: #dfe2e7; margin-bottom: 12px; }
+    input, select, textarea { width: 100%; background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-top: 5px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--pink); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; border-radius: 100px; padding: 9px 18px; font-weight: 600; cursor: pointer; background: #fff; color: #0a0b0e; text-decoration: none; white-space: nowrap; }
+    .btn:hover { background: var(--pink); }
+    .btn:disabled { opacity: 0.6; cursor: wait; }
+    .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+    .btn.ghost:hover { border-color: var(--ink); }
+    .btn.sm { padding: 6px 13px; font-size: 0.85rem; }
+    .btn.full { width: 100%; margin-top: 6px; }
+    .linkbtn { background: none; border: 0; color: var(--slate); font-size: 0.8rem; cursor: pointer; padding: 0; text-align: left; }
+    .linkbtn:hover { color: var(--ink); text-decoration: underline; }
+    .linkbtn.danger:hover { color: var(--red); }
+    .err { color: var(--red); font-size: 0.86rem; min-height: 1.3em; margin-top: 12px; }
+    :focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+
+    /* Top bar + section nav */
+    header { position: sticky; top: 0; z-index: 5; background: rgba(10, 11, 14, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+    header .top { display: flex; align-items: center; gap: 12px; height: 58px; }
+    header img { width: 38px; }
+    header h1 { font-size: 1.05rem; flex: 1; line-height: 1.2; min-width: 0; }
+    header h1 small { display: block; font: 500 0.72rem Inter, sans-serif; color: var(--pink); letter-spacing: 0.04em; }
+    .who { color: var(--slate); font-size: 0.82rem; }
+    .nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px 10px; font-size: 0.9rem; font-weight: 600; color: var(--slate); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+    .nav a:hover { color: var(--ink); }
+    .nav a.on { color: var(--ink); border-bottom-color: var(--pink); }
+    .nav a b { background: var(--pink); color: #0a0b0e; font-size: 0.7rem; line-height: 1; border-radius: 100px; padding: 3px 7px; }
+
+    main { padding-bottom: 60px; }
+    .loading { text-align: center; color: var(--slate); padding: 60px 20px; }
+
+    /* Filters */
+    .tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 20px 0 16px; }
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+    .tab { border: 1px solid var(--line); background: transparent; border-radius: 100px; padding: 6px 12px; font-size: 0.85rem; cursor: pointer; color: var(--slate); }
+    .tab b { color: var(--ink); margin-left: 4px; }
+    .tab.on { background: #fff; color: #0a0b0e; border-color: #fff; }
+    .tab.on b { color: #0a0b0e; }
+    .search { max-width: 240px; margin: 0; }
+    .mini { width: auto; margin: 0; padding: 7px 10px; font-size: 0.85rem; border-radius: 100px; }
+
+    /* Lead cards */
+    .list { display: grid; gap: 12px; }
+    .lead { padding: 16px 18px; display: grid; grid-template-columns: 1fr 300px; gap: 18px; }
+    .lead.is-new { border-left: 3px solid var(--pink); }
+    .lead-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 10px; }
+    .lead-head h3 { font-size: 1.05rem; }
+    .ago { color: var(--slate); font-size: 0.8rem; }
+    .pill { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 9px; border-radius: 100px; border: 1px solid currentColor; white-space: nowrap; }
+    .s-new { color: var(--pink); } .s-contacted { color: var(--blue); } .s-booked { color: var(--green); }
+    .s-completed { color: var(--slate); } .s-lost { color: var(--red); }
+    .pill.repeat { color: var(--pink); border-style: dashed; }
+    dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; font-size: 0.9rem; }
+    dt { color: var(--slate); }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    .contact { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .side { display: flex; flex-direction: column; gap: 8px; }
+    .side label { font-size: 0.78rem; font-weight: 600; color: var(--slate); display: block; }
+    .side select, .side textarea, .side input { margin-top: 4px; font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+    .side input { padding: 8px 10px; }
+    .side textarea { min-height: 84px; resize: vertical; font-weight: 400; }
+    .two { display: grid; grid-template-columns: 1.25fr 1fr; gap: 8px; }
+    .money { position: relative; display: block; }
+    .money::before { content: "$"; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); margin-top: 2px; color: var(--slate); font-size: 0.88rem; font-weight: 500; pointer-events: none; }
+    .money input { padding-left: 22px; }
+    .hint { font-size: 0.78rem; color: var(--pink); }
+    .side-foot { display: flex; align-items: center; gap: 14px; }
+    .side-foot .saved { flex: 1; }
+    .saved { font-size: 0.78rem; color: var(--green); }
+    .empty { text-align: center; color: var(--slate); padding: 60px 20px; }
+    .empty.sm { padding: 26px 20px; }
+    .banner { margin-top: 16px; padding: 12px 16px; border-color: var(--red); color: var(--red); font-size: 0.9rem; }
+
+    /* Calendar */
+    .cal-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 20px 0 6px; }
+    .cal-head h2 { font-size: 1.35rem; flex: 1; }
+    .cal-nav { display: flex; gap: 6px; }
+    .cal-nav .btn { min-width: 38px; }
+    .cal-info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; margin-bottom: 14px; }
+    .key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.8rem; color: var(--slate); }
+    .key span { display: inline-flex; align-items: center; gap: 6px; }
+    .warnlink { background: none; border: 0; padding: 0; color: var(--pink); font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+    .cal { overflow: hidden; }
+    .cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .cal-dow span { padding: 8px; font-size: 0.7rem; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--line); }
+    .day { min-height: 104px; min-width: 0; border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; text-align: left; padding: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: stretch; gap: 3px; border-radius: 0; }
+    .day:nth-child(7n) { border-right: 0; }
+    .day.last-row { border-bottom: 0; }
+    .day.out { color: var(--muted); background: rgba(255, 255, 255, 0.012); }
+    .day:hover { background: rgba(255, 255, 255, 0.035); }
+    .day.sel { box-shadow: inset 0 0 0 2px var(--pink); }
+    .num { font-size: 0.8rem; font-weight: 600; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; flex: none; }
+    .day.today .num { background: var(--pink); color: #0a0b0e; }
+    .chips { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .chip { display: block; font-size: 0.72rem; line-height: 1.35; padding: 2px 6px; border-radius: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); border: 1px solid transparent; }
+    .chip em { font-style: normal; color: var(--slate); }
+    .chip.k-booked { background: rgba(95, 211, 154, 0.14); border-left: 3px solid var(--green); }
+    .chip.k-completed { background: rgba(158, 165, 177, 0.1); border-left: 3px solid var(--slate); color: var(--slate); }
+    .chip.k-requested { border: 1px dashed var(--pink); }
+    .more { font-size: 0.7rem; color: var(--slate); padding-left: 2px; }
+    .dots { display: none; gap: 3px; justify-content: center; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+    .dot.k-booked { background: var(--green); }
+    .dot.k-completed { background: var(--slate); }
+    .dot.k-requested { box-shadow: inset 0 0 0 1.5px var(--pink); }
+    .agenda { margin-top: 18px; display: grid; gap: 10px; }
+    .agenda-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .agenda-head h3 { font-size: 1.05rem; flex: 1; }
+    .ev { padding: 14px 18px; display: grid; grid-template-columns: 92px 1fr auto; gap: 14px; align-items: start; }
+    .ev.k-booked { border-left: 3px solid var(--green); }
+    .ev.k-requested { border-left: 3px dashed var(--pink); }
+    .ev-time { font-weight: 600; font-size: 0.92rem; padding-top: 2px; }
+    .ev .lead-head { margin-bottom: 4px; }
+    .ev-meta { color: var(--slate); font-size: 0.88rem; overflow-wrap: anywhere; }
+    .ev .contact { margin-top: 10px; }
+    .ev-amt { font-weight: 600; font-variant-numeric: tabular-nums; padding-top: 2px; }
+
+    /* Clients */
+    .client { overflow: hidden; }
+    .client-row { width: 100%; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 18px; background: none; border: 0; text-align: left; cursor: pointer; border-radius: var(--r); }
+    .client-row:hover { background: rgba(255, 255, 255, 0.025); }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #2a1f2b; color: var(--pink); display: grid; place-items: center; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.02em; }
+    .cl-main { min-width: 0; }
+    .cl-main, .cl-sub, .cl-stats > span { display: block; }
+    .cl-main .lead-head { margin: 0 0 2px; }
+    .cl-name { font: 600 1rem/1.3 Sora, Inter, sans-serif; letter-spacing: -0.02em; }
+    .cl-sub { color: var(--slate); font-size: 0.84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cl-stats { display: flex; gap: 24px; text-align: right; }
+    .cl-stats > span { min-width: 56px; }
+    .cl-stats b { display: block; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .cl-stats small { font-size: 0.72rem; color: var(--slate); }
+    .client-body { border-top: 1px solid var(--line); padding: 14px 18px 16px; display: grid; gap: 14px; }
+    .client-body .contact { margin: 0; }
+    .client.open { border-color: #3a3f4a; }
+    .foot-tools { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+    /* Revenue */
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+    .kpi { padding: 14px 16px; }
+    .kpi span { color: var(--slate); font-size: 0.78rem; font-weight: 600; }
+    .kpi b { display: block; font: 600 1.6rem/1.25 Sora, Inter, sans-serif; letter-spacing: -0.02em; margin: 2px 0; font-variant-numeric: tabular-nums; }
+    .kpi small { color: var(--slate); font-size: 0.78rem; }
+    .panel { padding: 16px 18px; margin-bottom: 12px; }
+    .panel-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .panel-head h3 { font-size: 0.98rem; flex: 1; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid2 .panel { margin-bottom: 12px; }
+    .chart { position: relative; height: 190px; margin: 18px 0 0 46px; }
+    .gl { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); }
+    .gl.base { border-top-color: #3a3f4a; }
+    .gl span { position: absolute; right: 100%; top: 0; transform: translate(-8px, -50%); font-size: 0.72rem; color: var(--slate); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .bars { position: absolute; inset: 0; display: flex; }
+    .bcol { flex: 1; height: 100%; position: relative; display: flex; justify-content: center; align-items: flex-end; cursor: default; outline-offset: -2px; }
+    .bcol:hover, .bcol:focus-visible { background: rgba(255, 255, 255, 0.03); }
+    .bar { width: min(64%, 30px); background: var(--pink); border-radius: 4px 4px 0 0; }
+    .bcol.off .bar { background: #3d4350; }
+    .bval { position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.72rem; font-weight: 600; white-space: nowrap; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .blabels { display: flex; margin: 6px 0 0 46px; }
+    .blabels span { flex: 1; text-align: center; font-size: 0.72rem; color: var(--slate); }
+    .blabels .on { color: var(--ink); font-weight: 600; }
+    .bl-s { display: none; }
+    .chart-empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--slate); font-size: 0.88rem; }
+    .tip { position: fixed; z-index: 20; pointer-events: none; background: #fff; color: #0a0b0e; font-size: 0.8rem; font-weight: 600; padding: 6px 10px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); white-space: nowrap; }
+    .hbar + .hbar { margin-top: 12px; }
+    .hb-top { display: flex; justify-content: space-between; gap: 10px; font-size: 0.86rem; margin-bottom: 5px; }
+    .hb-top span:last-child { color: var(--slate); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .hb-top b { color: var(--ink); }
+    .hb-track { height: 8px; border-radius: 4px; background: #1f232b; overflow: hidden; }
+    .hb-fill { height: 100%; background: var(--pink); border-radius: 0 4px 4px 0; }
+    .uplist { display: grid; gap: 8px; font-size: 0.88rem; }
+    .uplist div { display: flex; gap: 10px; align-items: baseline; }
+    .uplist .d { color: var(--slate); width: 92px; flex: none; font-size: 0.82rem; }
+    .uplist .n { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .uplist .v { font-variant-numeric: tabular-nums; }
+    .note { color: var(--slate); font-size: 0.82rem; margin-top: 12px; }
+    .note b { color: var(--pink); font-weight: 600; }
+
+    /* Tables */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    td { padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th:first-child, td:first-child { padding-left: 0; }
+    th:last-child, td:last-child { padding-right: 0; }
+    .r { text-align: right; font-variant-numeric: tabular-nums; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr[data-edit] { cursor: pointer; }
+    tbody tr[data-edit]:hover { background: rgba(255, 255, 255, 0.025); }
+    td .linkbtn { color: var(--ink); font-size: inherit; font-weight: 600; }
+    .est { color: var(--pink); font-size: 0.72rem; font-weight: 600; margin-left: 4px; }
+    .muted { color: var(--slate); }
+
+    /* Add / edit dialog */
+    dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; width: min(520px, calc(100% - 32px)); max-height: calc(100vh - 32px); }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.65); }
+    dialog h2 { font-size: 1.15rem; margin-bottom: 4px; }
+    .job-meta { color: var(--slate); font-size: 0.84rem; margin-bottom: 14px; overflow-wrap: anywhere; }
+    .job-meta:empty { display: none; }
+    .job-sect { border-top: 1px solid var(--line); margin: 6px 0 12px; padding-top: 14px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+    .actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; margin-top: 8px; }
+    .actions .linkbtn { margin-right: auto; }
+
+    @media (max-width: 860px) {
+      .grid2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .lead { grid-template-columns: 1fr; }
+      .search { max-width: none; flex: 1 1 100%; }
+      .who, .hide-sm { display: none; }
+      .row { grid-template-columns: 1fr; }
+      .day { min-height: 56px; padding: 4px 2px; align-items: center; gap: 4px; }
+      .chips { display: none; }
+      .dots { display: flex; }
+      .ev { grid-template-columns: 1fr auto; gap: 4px 12px; padding: 14px 16px; }
+      .ev-time { grid-column: 1; grid-row: 1; }
+      .ev-amt { grid-column: 2; grid-row: 1; }
+      .ev-main { grid-column: 1 / -1; }
+      .client-row { grid-template-columns: 40px minmax(0, 1fr); padding: 14px 16px; }
+      .cl-stats { grid-column: 1 / -1; justify-content: flex-start; text-align: left; gap: 0; }
+      .cl-stats > span { flex: 1; }
+      .client-body { padding: 14px 16px 16px; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .kpi b { font-size: 1.35rem; }
+      .chart { margin-left: 40px; }
+      .blabels { margin-left: 40px; }
+      .bl-l { display: none; }
+      .bl-s { display: inline; }
+      .bval { display: none; }
+      .bval.keep { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shown until assets/firebase-config.js is filled in -->
+  <section id="setup" class="center hidden">
+    <div class="card">
+      <img src="../assets/logo.png" alt="Jackson Bros logo" />
+      <h2>CRM not connected yet</h2>
+      <p>Firebase still needs to be set up.</p>
+      <ol>
+        <li>Paste your Firebase config into <code>assets/firebase-config.js</code>.</li>
+        <li>Publish <code>firestore.rules</code> in the Firebase console.</li>
+        <li>Create your login under Authentication → Users.</li>
+      </ol>
+      <p style="margin:18px 0 0">The full steps are in <code>CRM-SETUP.md</code>.</p>
+    </div>
+  </section>
+
+  <!-- Sign in -->
+  <section id="login" class="center hidden">
+    <form class="card" id="login-form">
+      <img src="../assets/logo.png" alt="Jackson Bros logo" />
+      <h2>Jackson Bros CRM</h2>
+      <p>Sign in to see leads, bookings, clients and revenue.</p>
+      <label class="f">Email<input id="email" type="email" autocomplete="username" required /></label>
+      <label class="f">Password<input id="password" type="password" autocomplete="current-password" required /></label>
+      <button class="btn full" type="submit">Sign in</button>
+      <div class="err" id="login-err"></div>
+    </form>
+  </section>
+
+  <!-- CRM -->
+  <div id="app" class="hidden">
+    <header>
+      <div class="wrap top">
+        <img src="../assets/logo.png" alt="" />
+        <h1><span id="view-title">Leads</span><small>JACKSON BROS MOBILE CAR DETAILING</small></h1>
+        <span class="who" id="who"></span>
+        <button class="btn sm" id="add-btn" type="button">+ Add lead</button>
+        <button class="btn ghost sm" id="logout" type="button">Sign out</button>
+      </div>
+      <nav class="wrap nav" id="nav" aria-label="CRM sections">
+        <a href="#leads" data-view="leads">Leads <b id="nav-new" class="hidden"></b></a>
+        <a href="#calendar" data-view="calendar">Calendar</a>
+        <a href="#clients" data-view="clients">Clients</a>
+        <a href="#revenue" data-view="revenue">Revenue</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      <div id="banner" class="card banner hidden"></div>
+
+      <!-- Leads -->
+      <section id="v-leads" class="view">
+        <div class="tools">
+          <div class="tabs" id="tabs"></div>
+          <input class="search" id="search" type="search" placeholder="Search name, phone, car…" />
+        </div>
+        <div class="list" id="list"><div class="loading">Loading…</div></div>
+      </section>
+
+      <!-- Calendar -->
+      <section id="v-calendar" class="view hidden">
+        <div class="cal-head">
+          <h2 id="cal-month">Calendar</h2>
+          <div class="cal-nav">
+            <button class="btn ghost sm" id="cal-prev" type="button" aria-label="Previous month">‹</button>
+            <button class="btn ghost sm" id="cal-today" type="button">Today</button>
+            <button class="btn ghost sm" id="cal-next" type="button" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <div class="cal-info">
+          <span class="sub" id="cal-sum"></span>
+          <button class="warnlink hidden" id="cal-unsched" type="button" data-goto="booked"></button>
+        </div>
+        <div class="card cal">
+          <div class="cal-dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+          <div class="cal-grid" id="cal-grid"><div class="loading" style="grid-column:1/-1">Loading…</div></div>
+        </div>
+        <div class="key" style="margin-top:10px">
+          <span><i class="dot k-booked"></i>Booked</span>
+          <span><i class="dot k-completed"></i>Completed</span>
+          <span><i class="dot k-requested"></i>Requested date (not booked yet)</span>
+        </div>
+        <div class="agenda" id="agenda"></div>
+      </section>
+
+      <!-- Clients -->
+      <section id="v-clients" class="view hidden">
+        <div class="tools">
+          <div class="tabs" id="cl-tabs"></div>
+          <select class="mini" id="cl-sort" aria-label="Sort clients">
+            <option value="recent">Most recent</option>
+            <option value="spent">Top spenders</option>
+            <option value="jobs">Most jobs</option>
+            <option value="name">Name A–Z</option>
+          </select>
+          <input class="search" id="cl-search" type="search" placeholder="Search name, phone, car…" />
+        </div>
+        <p class="sub" id="cl-sum" style="margin:-4px 0 14px"></p>
+        <div class="list" id="cl-list"><div class="loading">Loading…</div></div>
+        <div class="foot-tools"><button class="btn ghost sm" id="cl-csv" type="button">Download client list (CSV)</button></div>
+      </section>
+
+      <!-- Revenue -->
+      <section id="v-revenue" class="view hidden">
+        <div class="tools">
+          <div class="tabs" id="rv-tabs"></div>
+          <button class="btn ghost sm" id="rv-csv" type="button">Download CSV</button>
+        </div>
+        <div id="rv-body"><div class="loading">Loading…</div></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add or edit a lead / job -->
+  <dialog id="job-dialog">
+    <form id="job-form" method="dialog">
+      <h2 id="job-title">Add a lead</h2>
+      <p class="job-meta" id="job-meta"></p>
+      <div class="row">
+        <label class="f">Name<input name="name" required maxlength="100" /></label>
+        <label class="f">Phone<input name="phone" type="tel" required maxlength="30" /></label>
+      </div>
+      <label class="f">Email<input name="email" type="email" maxlength="120" /></label>
+      <label class="f">Year / make / model<input name="vehicle" maxlength="100" /></label>
+      <div class="row">
+        <label class="f">Package
+          <select name="service">
+            <option value="">Not sure yet</option>
+            <option>Premium Package ($200)</option><option>Basic Package ($150)</option><option>Maintenance Package ($100)</option>
+          </select>
+        </label>
+        <label class="f">Preferred date<input name="date" type="date" /></label>
+      </div>
+      <label class="f">Address or "drop off"<input name="location" maxlength="200" /></label>
+      <div class="job-sect">
+        <div class="row">
+          <label class="f">Status
+            <select name="status">
+              <option value="new">New</option><option value="contacted">Contacted</option><option value="booked">Booked</option>
+              <option value="completed">Completed</option><option value="lost">Lost</option>
+            </select>
+          </label>
+          <span></span>
+        </div>
+        <div class="row">
+          <label class="f">Appointment date<input name="apptDate" type="date" /></label>
+          <label class="f">Time<input name="apptTime" type="time" step="900" /></label>
+        </div>
+        <div class="row">
+          <label class="f">Price charged<span class="money"><input name="price" inputmode="decimal" maxlength="10" /></span></label>
+          <label class="f">Tip<span class="money"><input name="tip" inputmode="decimal" maxlength="10" placeholder="0" /></span></label>
+        </div>
+      </div>
+      <label class="f">Notes<textarea name="notes" rows="3" maxlength="2000"></textarea></label>
+      <div class="actions">
+        <button class="linkbtn danger hidden" type="button" id="job-del">Delete</button>
+        <button class="btn ghost sm" type="button" id="job-cancel">Cancel</button>
+        <button class="btn sm" type="submit" id="job-save">Save</button>
+      </div>
+      <div class="err" id="job-err"></div>
+    </form>
+  </dialog>
+
+  <div class="tip hidden" id="tip" role="status"></div>
+
+  <script src="../assets/firebase-config.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const $ = (s) => document.querySelector(s);
+    const cfg = window.LED_FIREBASE;
+    const STATUSES = [
+      ["new", "New"], ["contacted", "Contacted"], ["booked", "Booked"],
+      ["completed", "Completed"], ["lost", "Lost"]
+    ];
+    const STATUS_LABEL = Object.fromEntries(STATUSES);
+    const VIEWS = { leads: "Leads", calendar: "Calendar", clients: "Clients", revenue: "Revenue" };
+    const PERIODS = [["month", "This month"], ["lastmonth", "Last month"], ["year", "This year"], ["lastyear", "Last year"], ["all", "All time"]];
+
+    /* ---------- Small helpers ---------- */
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const digits = (s) => String(s || "").replace(/[^\d+]/g, "");
+    const pad = (n) => String(n).padStart(2, "0");
+    const ymd = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    const todayStr = () => ymd(new Date());
+    const parseYmd = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
+    const isYmd = (s) => !!parseYmd(s);
+    const tsDate = (ts) => (ts && ts.toDate ? ts.toDate() : null);
+    const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
+    const firstName = (n) => String(n || "").trim().split(/\s+/)[0] || "—";
+    const initials = (n) => String(n || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0] || "").join("").toUpperCase() || "?";
+    const isDropOff = (s) => /^\s*drop/i.test(s || "");
+
+    function niceDate(s, opts) {
+      const d = parseYmd(s);
+      if (!d) return s || "";
+      return d.toLocaleDateString(undefined, opts || { weekday: "short", month: "short", day: "numeric" });
+    }
+    function shortDate(s) {
+      const d = parseYmd(s);
+      if (!d) return "";
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: d.getFullYear() === new Date().getFullYear() ? undefined : "numeric" });
+    }
+    function time12(t) {
+      const m = /^(\d{1,2}):(\d{2})/.exec(t || "");
+      if (!m) return "";
+      const h = +m[1];
+      return (h % 12 || 12) + ":" + m[2] + (h >= 12 ? " PM" : " AM");
+    }
+    function timeShort(t) {
+      const m = /^(\d{1,2}):(\d{2})/.exec(t || "");
+      if (!m) return "";
+      const h = +m[1];
+      return (h % 12 || 12) + (m[2] !== "00" ? ":" + m[2] : "") + (h >= 12 ? "p" : "a");
+    }
+    function money(n) {
+      n = Number(n) || 0;
+      const cents = Math.round(n * 100) % 100 !== 0;
+      return n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: 2 });
+    }
+    function moneyShort(n) {
+      if (n >= 1000) return "$" + (Math.round(n / 100) / 10).toString().replace(/\.0$/, "") + "k";
+      return "$" + Math.round(n);
+    }
+    function parseMoney(v) {
+      const s = String(v ?? "").replace(/[$,\s]/g, "");
+      if (s === "") return null;
+      const n = Math.round(parseFloat(s) * 100) / 100;
+      return Number.isFinite(n) && n >= 0 && /^\d*\.?\d*$/.test(s) ? n : NaN;
+    }
+    const packagePrice = (s) => { const m = /\$(\d+(?:\.\d+)?)/.exec(s || ""); return m ? +m[1] : null; };
+    const pkgName = (s) => String(s || "").replace(/\s*\(\$[\d.]+\)\s*$/, "").trim();
+    const hasPrice = (l) => typeof l.price === "number";
+    const jobPrice = (l) => (hasPrice(l) ? l.price : packagePrice(l.service)); // null = unknown
+    const jobTip = (l) => (typeof l.tip === "number" ? l.tip : 0);
+    const jobTotal = (l) => (jobPrice(l) || 0) + jobTip(l);
+    // The day a job counts on: the appointment, else the requested date, else the day it came in.
+    const jobDate = (l) => (isYmd(l.apptDate) ? l.apptDate : isYmd(l.date) ? l.date : tsDate(l.createdAt) ? ymd(tsDate(l.createdAt)) : "");
+    const pill = (s) => `<span class="pill s-${esc(s)}">${esc(STATUS_LABEL[s] || s || "")}</span>`;
+
+    // When a job moves to Booked or Completed, fill in the obvious blanks so the calendar and revenue stay accurate.
+    function withDefaults(cur, patch) {
+      const next = { ...cur, ...patch };
+      const out = { ...patch };
+      const today = todayStr();
+      if (next.status === "booked" && !isYmd(next.apptDate) && isYmd(next.date) && next.date >= today) out.apptDate = next.date;
+      if (next.status === "completed") {
+        if (!isYmd(next.apptDate)) out.apptDate = isYmd(next.date) && next.date <= today ? next.date : today;
+        if (typeof next.price !== "number") { const pp = packagePrice(next.service); if (pp != null) out.price = pp; }
+      }
+      return out;
+    }
+
+    function ago(ts) {
+      const d = tsDate(ts);
+      if (!d) return "";
+      const mins = Math.round((Date.now() - d) / 60000);
+      if (mins < 1) return "just now";
+      if (mins < 60) return mins + " min ago";
+      const hrs = Math.round(mins / 60);
+      if (hrs < 24) return hrs + " hr ago";
+      const days = Math.round(hrs / 24);
+      if (days < 7) return days + (days === 1 ? " day ago" : " days ago");
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: d.getFullYear() === new Date().getFullYear() ? undefined : "numeric" });
+    }
+
+    function downloadCsv(filename, rows) {
+      const cell = (v) => {
+        if (typeof v === "number") return String(v);
+        let s = String(v ?? "");
+        if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; // stop spreadsheet formulas sneaking in from the public form
+        return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const csv = rows.map((r) => r.map(cell).join(",")).join("\r\n");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+
+    if (!cfg || !cfg.apiKey || cfg.apiKey.startsWith("PASTE")) {
+      $("#setup").classList.remove("hidden");
+    } else {
+      start();
+    }
+
+    function start() {
+      const app = initializeApp(cfg);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const leadsRef = collection(db, "leads");
+
+      let leads = [];
+      let loaded = false;
+      let view = "leads";
+      let filter = "new";
+      let term = "";
+      let calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      let calSel = todayStr();
+      let clMode = "customers";
+      let clSort = "recent";
+      let clTerm = "";
+      let clients = [];
+      const openClients = new Set();
+      let period = "month";
+      let stopListening = null;
+      let renderPending = false;
+
+      /* ---------- Sign in / out ---------- */
+      $("#login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector("button");
+        btn.disabled = true;
+        $("#login-err").textContent = "";
+        try {
+          await signInWithEmailAndPassword(auth, $("#email").value.trim(), $("#password").value);
+        } catch (err) {
+          const c = err.code || "";
+          $("#login-err").textContent =
+            c.includes("invalid") || c.includes("wrong-password") || c.includes("user-not-found") ? "Wrong email or password." :
+            c.includes("too-many-requests") ? "Too many tries. Wait a minute and try again." :
+            "Couldn't sign in (" + (c || err.message) + ").";
+        }
+        btn.disabled = false;
+      });
+      $("#logout").addEventListener("click", () => signOut(auth));
+
+      onAuthStateChanged(auth, (user) => {
+        if (stopListening) { stopListening(); stopListening = null; }
+        $("#login").classList.toggle("hidden", !!user);
+        $("#app").classList.toggle("hidden", !user);
+        if (!user) { loaded = false; leads = []; return; }
+        $("#who").textContent = user.email;
+        stopListening = onSnapshot(query(leadsRef, orderBy("createdAt", "desc")), (snap) => {
+          $("#banner").classList.add("hidden");
+          leads = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
+          loaded = true;
+          render();
+        }, (err) => {
+          const banner = $("#banner");
+          banner.classList.remove("hidden");
+          banner.textContent = err.code === "permission-denied"
+            ? "This login isn't allowed to see leads. Add " + user.email + " to the owner list in firestore.rules and publish the rules again."
+            : "Couldn't load leads: " + err.message;
+          $("#list").innerHTML = "";
+        });
+      });
+
+      /* ---------- Switching sections ---------- */
+      function route() {
+        const v = location.hash.replace("#", "");
+        view = VIEWS[v] ? v : "leads";
+        document.querySelectorAll(".view").forEach((s) => s.classList.toggle("hidden", s.id !== "v-" + view));
+        document.querySelectorAll("#nav a").forEach((a) => {
+          const on = a.dataset.view === view;
+          a.classList.toggle("on", on);
+          if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+        });
+        $("#view-title").textContent = VIEWS[view];
+        hideTip();
+        render();
+      }
+      window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+
+      function render() {
+        // Don't wipe a field someone is in the middle of typing in; redraw when they leave it.
+        const a = document.activeElement;
+        if (a && a.matches && a.matches("#list .lead input, #list .lead textarea")) { renderPending = true; return; }
+        renderPending = false;
+        const newCount = leads.filter((l) => l.status === "new").length;
+        document.title = (newCount ? "(" + newCount + ") " : "") + VIEWS[view] + " | Jackson Bros";
+        $("#nav-new").textContent = newCount;
+        $("#nav-new").classList.toggle("hidden", !newCount);
+        if (!loaded) return;
+        ({ leads: renderLeads, calendar: renderCalendar, clients: renderClients, revenue: renderRevenue })[view]();
+      }
+      document.addEventListener("focusout", () => { if (renderPending) setTimeout(render, 0); });
+
+      /* =====================================================
+         LEADS
+         ===================================================== */
+      function renderLeads() {
+        const counts = { all: leads.length };
+        STATUSES.forEach(([k]) => (counts[k] = 0));
+        leads.forEach((l) => { counts[l.status] = (counts[l.status] || 0) + 1; });
+
+        $("#tabs").innerHTML = [["all", "All"], ...STATUSES].map(([k, label]) =>
+          `<button class="tab${filter === k ? " on" : ""}" data-filter="${k}" type="button">${label}<b>${counts[k] || 0}</b></button>`
+        ).join("");
+
+        const t = term.toLowerCase();
+        const shown = leads.filter((l) =>
+          (filter === "all" || l.status === filter) &&
+          (!t || [l.name, l.phone, l.email, l.vehicle, l.service, l.location, l.message, l.notes].join(" ").toLowerCase().includes(t))
+        );
+        // Booked jobs read best as a schedule: soonest first, undated at the end.
+        if (filter === "booked") {
+          const k = (l) => (isYmd(l.apptDate) ? l.apptDate : "9999") + (l.apptTime || "99");
+          shown.sort((a, b) => k(a).localeCompare(k(b)));
+        }
+
+        if (!shown.length) {
+          $("#list").innerHTML = `<div class="empty">${leads.length ? "No leads match." : "No leads yet. New booking requests from the website will show up here automatically."}</div>`;
+          return;
+        }
+
+        $("#list").innerHTML = shown.map((l) => {
+          const sched = l.status === "booked" || l.status === "completed";
+          const when = isYmd(l.apptDate) ? niceDate(l.apptDate) + (l.apptTime ? ", " + time12(l.apptTime) : "") : "";
+          const rows = [
+            [l.status === "completed" ? "Done" : "Booked for", when],
+            ["Total", l.status === "completed" ? money(jobTotal(l)) + (hasPrice(l) ? "" : " (package price)") : ""],
+            ["Email", l.email], ["Vehicle", l.vehicle], ["Size", l.size], ["Package", l.service || "Not sure"],
+            ["Preferred", niceDate(l.date)], ["Where", l.location], ["Message", l.message]
+          ].filter(([, v]) => v);
+          const tel = digits(l.phone);
+          const pp = packagePrice(l.service);
+          return `
+          <article class="card lead${l.status === "new" ? " is-new" : ""}" data-id="${esc(l.id)}">
+            <div>
+              <div class="lead-head">
+                <h3>${esc(l.name)}</h3>
+                ${pill(l.status)}
+                <span class="ago">${ago(l.createdAt)}${l.source === "manual" ? " · added by hand" : ""}</span>
+              </div>
+              <dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
+              <div class="contact">
+                ${tel ? `<a class="btn sm" href="tel:${esc(tel)}">Call ${esc(l.phone)}</a><a class="btn ghost sm" href="sms:${esc(tel)}">Text</a>` : ""}
+                ${l.email ? `<a class="btn ghost sm" href="mailto:${esc(l.email)}">Email</a>` : ""}
+              </div>
+            </div>
+            <div class="side">
+              <label>Status
+                <select class="status">${STATUSES.map(([k, label]) => `<option value="${k}"${l.status === k ? " selected" : ""}>${label}</option>`).join("")}</select>
+              </label>
+              ${sched ? `
+              <div class="two">
+                <label>Appointment<input type="date" data-field="apptDate" value="${esc(isYmd(l.apptDate) ? l.apptDate : "")}" /></label>
+                <label>Time<input type="time" step="900" data-field="apptTime" value="${esc(l.apptTime || "")}" /></label>
+              </div>
+              ${l.status === "booked" && !isYmd(l.apptDate) ? `<span class="hint">Pick a date so it shows on the calendar.</span>` : ""}
+              <div class="two">
+                <label>Price<span class="money"><input inputmode="decimal" maxlength="10" data-field="price" value="${hasPrice(l) ? l.price : ""}" placeholder="${pp ?? ""}" /></span></label>
+                <label>Tip<span class="money"><input inputmode="decimal" maxlength="10" data-field="tip" value="${typeof l.tip === "number" ? l.tip : ""}" placeholder="0" /></span></label>
+              </div>` : ""}
+              <label>Notes
+                <textarea class="notes" data-field="notes" placeholder="Quote, time booked, follow-up…">${esc(l.notes)}</textarea>
+              </label>
+              <div class="side-foot"><span class="saved"></span><button class="linkbtn" type="button" data-edit="${esc(l.id)}">Edit</button><button class="linkbtn danger" type="button" data-del="${esc(l.id)}">Delete</button></div>
+            </div>
+          </article>`;
+        }).join("");
+      }
+
+      $("#tabs").addEventListener("click", (e) => {
+        const b = e.target.closest(".tab");
+        if (b) { filter = b.dataset.filter; render(); }
+      });
+      $("#search").addEventListener("input", (e) => { term = e.target.value.trim(); render(); });
+
+      function flash(id, msg, bad) {
+        const s = document.querySelector(`#list .lead[data-id="${CSS.escape(id)}"] .saved`);
+        if (!s) return;
+        s.style.color = bad ? "var(--red)" : "";
+        s.textContent = msg;
+        if (!bad) setTimeout(() => { if (s.textContent === msg) s.textContent = ""; }, 1800);
+      }
+
+      // Status, appointment, price, tip and notes all save as soon as they change.
+      $("#list").addEventListener("change", async (e) => {
+        const el = e.target;
+        const card = el.closest(".lead");
+        if (!card) return;
+        const id = card.dataset.id;
+        const lead = leads.find((l) => l.id === id);
+        if (!lead) return;
+        let patch;
+        if (el.matches(".status")) {
+          patch = withDefaults(lead, { status: el.value });
+        } else if (el.dataset.field) {
+          const f = el.dataset.field;
+          const isMoney = f === "price" || f === "tip";
+          const v = isMoney ? parseMoney(el.value) : el.value;
+          if (Number.isNaN(v)) { flash(id, "Numbers only, like 140", true); return; }
+          if (v === (isMoney ? (typeof lead[f] === "number" ? lead[f] : null) : (lead[f] || ""))) return;
+          patch = { [f]: v };
+        } else return;
+        try {
+          await updateDoc(doc(db, "leads", id), { ...patch, updatedAt: serverTimestamp() });
+          if (!el.matches(".status")) flash(id, "Saved");
+        } catch (err) { flash(id, "Didn't save. Try again.", true); }
+      });
+
+      $("#list").addEventListener("click", async (e) => {
+        const b = e.target.closest("[data-del]");
+        if (b) deleteLead(b.dataset.del);
+      });
+
+      async function deleteLead(id) {
+        const lead = leads.find((l) => l.id === id);
+        if (!confirm("Delete " + (lead ? lead.name : "this customer") + "? This can't be undone.")) return false;
+        try { await deleteDoc(doc(db, "leads", id)); return true; }
+        catch (err) { flash(id, "Couldn't delete.", true); alert("Couldn't delete: " + (err.code || err.message)); return false; }
+      }
+
+      /* =====================================================
+         CALENDAR
+         ===================================================== */
+      const KIND_ORDER = { booked: 0, completed: 1, requested: 2 };
+      function calEvents() {
+        const out = [];
+        for (const l of leads) {
+          if (l.status === "lost") continue;
+          const kind = l.status === "booked" || l.status === "completed" ? l.status : "requested";
+          if (isYmd(l.apptDate)) out.push({ lead: l, date: l.apptDate, time: l.apptTime || "", kind });
+          else if (kind === "requested" && isYmd(l.date)) out.push({ lead: l, date: l.date, time: "", kind });
+        }
+        return out;
+      }
+      const evSort = (a, b) => (a.time || "99").localeCompare(b.time || "99") || KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || String(a.lead.name).localeCompare(String(b.lead.name));
+
+      function gcalUrl(l) {
+        const d = parseYmd(l.apptDate);
+        const stamp = (x) => ymd(x).replace(/-/g, "") + "T" + pad(x.getHours()) + pad(x.getMinutes()) + "00";
+        let dates;
+        const t = /^(\d{1,2}):(\d{2})/.exec(l.apptTime || "");
+        if (t) {
+          const s = new Date(d.getFullYear(), d.getMonth(), d.getDate(), +t[1], +t[2]);
+          dates = stamp(s) + "/" + stamp(new Date(s.getTime() + 2 * 3600e3));
+        } else {
+          dates = ymd(d).replace(/-/g, "") + "/" + ymd(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)).replace(/-/g, "");
+        }
+        const details = [
+          l.phone && "Phone: " + l.phone, l.vehicle && "Vehicle: " + l.vehicle, l.service && "Package: " + l.service,
+          hasPrice(l) && "Price: " + money(l.price), l.notes && "Notes: " + l.notes
+        ].filter(Boolean).join("\n");
+        const p = new URLSearchParams({
+          action: "TEMPLATE",
+          text: "Detail: " + l.name + (l.service ? " (" + pkgName(l.service) + ")" : ""),
+          dates, details,
+          location: isDropOff(l.location) ? "" : (l.location || ""),
+          ctz: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"
+        });
+        return "https://calendar.google.com/calendar/render?" + p.toString();
+      }
+
+      function renderCalendar() {
+        const y = calMonth.getFullYear(), m = calMonth.getMonth();
+        $("#cal-month").textContent = calMonth.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        const events = calEvents();
+        const byDay = new Map();
+        events.forEach((ev) => { if (!byDay.has(ev.date)) byDay.set(ev.date, []); byDay.get(ev.date).push(ev); });
+        byDay.forEach((list) => list.sort(evSort));
+
+        const first = new Date(y, m, 1);
+        const last = new Date(y, m + 1, 0);
+        const cells = Math.ceil((first.getDay() + last.getDate()) / 7) * 7;
+        const today = todayStr();
+        let html = "";
+        for (let i = 0; i < cells; i++) {
+          const d = new Date(y, m, 1 - first.getDay() + i);
+          const key = ymd(d);
+          const evs = byDay.get(key) || [];
+          const cls = ["day", d.getMonth() !== m && "out", key === today && "today", key === calSel && "sel", i >= cells - 7 && "last-row"].filter(Boolean).join(" ");
+          const label = d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }) + (evs.length ? ", " + evs.length + (evs.length === 1 ? " job" : " jobs") : "");
+          html += `<button type="button" class="${cls}" data-day="${key}" aria-label="${esc(label)}" aria-pressed="${key === calSel}">
+            <span class="num">${d.getDate()}</span>
+            <span class="chips">${evs.slice(0, 3).map((ev) => `<span class="chip k-${ev.kind}">${ev.time ? `<em>${timeShort(ev.time)}</em> ` : ""}${esc(firstName(ev.lead.name))}</span>`).join("")}${evs.length > 3 ? `<span class="more">+${evs.length - 3} more</span>` : ""}</span>
+            <span class="dots">${evs.slice(0, 4).map((ev) => `<i class="dot k-${ev.kind}"></i>`).join("")}</span>
+          </button>`;
+        }
+        $("#cal-grid").innerHTML = html;
+
+        const ms = ymd(first), me = ymd(last);
+        const inMonth = events.filter((ev) => ev.date >= ms && ev.date <= me);
+        const nb = inMonth.filter((ev) => ev.kind === "booked");
+        const nc = inMonth.filter((ev) => ev.kind === "completed");
+        const nr = inMonth.filter((ev) => ev.kind === "requested");
+        const bookedVal = sum(nb, (ev) => jobPrice(ev.lead) || 0);
+        $("#cal-sum").textContent = `This month: ${nb.length} booked${bookedVal ? " (" + money(bookedVal) + ")" : ""} · ${nc.length} completed · ${nr.length} requested`;
+
+        const unsched = leads.filter((l) => l.status === "booked" && !isYmd(l.apptDate)).length;
+        const u = $("#cal-unsched");
+        u.classList.toggle("hidden", !unsched);
+        u.textContent = unsched + (unsched === 1 ? " booked job has" : " booked jobs have") + " no date yet";
+
+        renderAgenda(byDay.get(calSel) || []);
+      }
+
+      function renderAgenda(evs) {
+        const title = niceDate(calSel, { weekday: "long", month: "long", day: "numeric" });
+        let html = `<div class="agenda-head"><h3>${esc(title)}</h3><button class="btn sm" type="button" data-book="${calSel}">+ Book this day</button></div>`;
+        if (!evs.length) {
+          html += `<div class="card empty sm">Nothing scheduled.</div>`;
+        } else {
+          html += evs.map((ev) => {
+            const l = ev.lead;
+            const tel = digits(l.phone);
+            const price = jobPrice(l);
+            const amount = ev.kind === "completed" ? money(jobTotal(l)) : price != null ? money(price) : "";
+            const where = l.location && !isDropOff(l.location) ? l.location : "";
+            return `<article class="card ev k-${ev.kind}">
+              <div class="ev-time">${ev.time ? time12(ev.time) : ev.kind === "requested" ? "Requested" : "No time set"}</div>
+              <div class="ev-main">
+                <div class="lead-head"><h3>${esc(l.name)}</h3>${pill(l.status)}</div>
+                <div class="ev-meta">${[pkgName(l.service), l.vehicle, l.location].filter(Boolean).map(esc).join(" · ") || "No details yet"}</div>
+                <div class="contact">
+                  <button class="btn sm" type="button" data-edit="${esc(l.id)}">Open</button>
+                  ${tel ? `<a class="btn ghost sm" href="tel:${esc(tel)}">Call</a><a class="btn ghost sm" href="sms:${esc(tel)}">Text</a>` : ""}
+                  ${where ? `<a class="btn ghost sm" href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(where)}" target="_blank" rel="noopener">Directions</a>` : ""}
+                  ${ev.kind === "booked" ? `<a class="btn ghost sm" href="${esc(gcalUrl(l))}" target="_blank" rel="noopener">Add to Google Calendar</a>` : ""}
+                </div>
+              </div>
+              <div class="ev-amt">${amount}</div>
+            </article>`;
+          }).join("");
+        }
+        $("#agenda").innerHTML = html;
+      }
+
+      $("#cal-prev").addEventListener("click", () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() - 1, 1); render(); });
+      $("#cal-next").addEventListener("click", () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + 1, 1); render(); });
+      $("#cal-today").addEventListener("click", () => { const n = new Date(); calMonth = new Date(n.getFullYear(), n.getMonth(), 1); calSel = todayStr(); render(); });
+      $("#cal-grid").addEventListener("click", (e) => {
+        const b = e.target.closest(".day");
+        if (!b) return;
+        calSel = b.dataset.day;
+        const d = parseYmd(calSel);
+        if (d.getMonth() !== calMonth.getMonth()) calMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+        render();
+        if (matchMedia("(max-width: 720px)").matches) $("#agenda").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      /* =====================================================
+         CLIENTS
+         ===================================================== */
+      // One client per phone number (falls back to email, then name), so repeat bookings group together.
+      function clientKey(l) {
+        const d = String(l.phone || "").replace(/\D/g, "").slice(-10);
+        if (d.length >= 7) return "p" + d;
+        if (l.email) return "e" + l.email.trim().toLowerCase();
+        return "n" + String(l.name || "").trim().toLowerCase();
+      }
+
+      function buildClients() {
+        const map = new Map();
+        for (const l of leads) {
+          const k = clientKey(l);
+          if (!map.has(k)) map.set(k, []);
+          map.get(k).push(l);
+        }
+        const today = todayStr();
+        return [...map.entries()].map(([key, jobs]) => {
+          jobs.sort((a, b) => jobDate(b).localeCompare(jobDate(a)));
+          const pick = (f) => (jobs.find((j) => j[f] && !(f === "location" && isDropOff(j[f]))) || {})[f] || "";
+          const done = jobs.filter((j) => j.status === "completed");
+          const vehicles = [];
+          jobs.forEach((j) => { const v = String(j.vehicle || "").trim(); if (v && !vehicles.some((x) => x.toLowerCase() === v.toLowerCase())) vehicles.push(v); });
+          const upcoming = jobs.filter((j) => j.status === "booked" && isYmd(j.apptDate) && j.apptDate >= today).sort((a, b) => (a.apptDate + (a.apptTime || "")).localeCompare(b.apptDate + (b.apptTime || "")));
+          const created = jobs.map((j) => tsDate(j.createdAt)).filter(Boolean).sort((a, b) => a - b);
+          const name = jobs.slice().sort((a, b) => (tsDate(b.createdAt) || 0) - (tsDate(a.createdAt) || 0))[0].name || "Unknown";
+          const c = {
+            key, jobs, name, phone: pick("phone"), email: pick("email"), location: pick("location"), vehicles, done,
+            spent: sum(done, jobTotal),
+            lastVisit: done.length ? done.map(jobDate).sort().pop() : "",
+            next: upcoming[0] || null,
+            lastActivity: jobs.map(jobDate).sort().pop() || "",
+            since: created[0] || null,
+            isCustomer: jobs.some((j) => j.status === "booked" || j.status === "completed")
+          };
+          c.search = [c.name, c.phone, c.email, c.location, ...vehicles, ...jobs.map((j) => j.notes)].join(" ").toLowerCase();
+          return c;
+        });
+      }
+
+      function renderClients() {
+        clients = buildClients();
+        const customers = clients.filter((c) => c.isCustomer);
+        $("#cl-tabs").innerHTML = [["customers", "Customers", customers.length], ["all", "Everyone", clients.length]].map(([k, label, n]) =>
+          `<button class="tab${clMode === k ? " on" : ""}" data-mode="${k}" type="button">${label}<b>${n}</b></button>`
+        ).join("");
+
+        const repeat = customers.filter((c) => c.done.length >= 2).length;
+        $("#cl-sum").textContent = `${customers.length} ${customers.length === 1 ? "customer" : "customers"} · ${repeat} repeat · ${money(sum(customers, (c) => c.spent))} all-time`;
+
+        const t = clTerm.toLowerCase();
+        const shown = (clMode === "customers" ? customers : clients).filter((c) => !t || c.search.includes(t));
+        const sorters = {
+          recent: (a, b) => b.lastActivity.localeCompare(a.lastActivity),
+          spent: (a, b) => b.spent - a.spent || b.done.length - a.done.length,
+          jobs: (a, b) => b.done.length - a.done.length || b.spent - a.spent,
+          name: (a, b) => a.name.localeCompare(b.name)
+        };
+        shown.sort(sorters[clSort]);
+
+        if (!shown.length) {
+          $("#cl-list").innerHTML = `<div class="empty">${t ? "No clients match." : clMode === "customers" ? "No customers yet. Anyone you mark Booked or Completed shows up here." : "No contacts yet."}</div>`;
+          return;
+        }
+
+        $("#cl-list").innerHTML = shown.map((c) => {
+          const open = openClients.has(c.key);
+          const tel = digits(c.phone);
+          const when = c.next ? shortDate(c.next.apptDate) : c.lastVisit ? shortDate(c.lastVisit) : "—";
+          const sub = [c.phone, c.vehicles.join(", ")].filter(Boolean).join(" · ");
+          const info = [
+            ["Email", c.email], ["Vehicles", c.vehicles.join(", ")], ["Address", c.location],
+            ["Next job", c.next ? niceDate(c.next.apptDate) + (c.next.apptTime ? ", " + time12(c.next.apptTime) : "") + (c.next.service ? " · " + pkgName(c.next.service) : "") : ""],
+            ["First contact", c.since ? c.since.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : ""]
+          ].filter(([, v]) => v);
+          return `<article class="card client${open ? " open" : ""}">
+            <button class="client-row" type="button" data-client="${esc(c.key)}" aria-expanded="${open}">
+              <span class="avatar" aria-hidden="true">${esc(initials(c.name))}</span>
+              <span class="cl-main">
+                <span class="lead-head"><span class="cl-name">${esc(c.name)}</span>${c.done.length >= 2 ? `<span class="pill repeat">Repeat</span>` : ""}${!c.isCustomer ? `<span class="ago">lead only</span>` : ""}</span>
+                <span class="cl-sub">${esc(sub || "No phone or vehicle on file")}</span>
+              </span>
+              <span class="cl-stats">
+                <span><b>${c.done.length}</b><small>${c.done.length === 1 ? "job" : "jobs"}</small></span>
+                <span><b>${money(c.spent)}</b><small>spent</small></span>
+                <span><b>${esc(when)}</b><small>${c.next ? "next job" : "last visit"}</small></span>
+              </span>
+            </button>
+            ${open ? `<div class="client-body">
+              <div class="contact">
+                ${tel ? `<a class="btn sm" href="tel:${esc(tel)}">Call ${esc(c.phone)}</a><a class="btn ghost sm" href="sms:${esc(tel)}">Text</a>` : ""}
+                ${c.email ? `<a class="btn ghost sm" href="mailto:${esc(c.email)}">Email</a>` : ""}
+                <button class="btn ghost sm" type="button" data-newjob="${esc(c.key)}">+ New job</button>
+              </div>
+              ${info.length ? `<dl>${info.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
+              <div class="tbl-wrap"><table>
+                <thead><tr><th>Date</th><th>Package</th><th>Vehicle</th><th>Status</th><th class="r">Amount</th></tr></thead>
+                <tbody>${c.jobs.map((j) => `<tr data-edit="${esc(j.id)}">
+                  <td><button class="linkbtn" type="button" data-edit="${esc(j.id)}">${esc(shortDate(jobDate(j)) || "—")}</button></td>
+                  <td>${esc(pkgName(j.service) || "—")}</td>
+                  <td>${esc(j.vehicle || "—")}</td>
+                  <td>${pill(j.status)}</td>
+                  <td class="r">${j.status === "completed" ? money(jobTotal(j)) : jobPrice(j) != null ? `<span class="muted">${money(jobPrice(j))}</span>` : `<span class="muted">—</span>`}</td>
+                </tr>`).join("")}</tbody>
+              </table></div>
+            </div>` : ""}
+          </article>`;
+        }).join("");
+      }
+
+      $("#cl-tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) { clMode = b.dataset.mode; render(); } });
+      $("#cl-sort").addEventListener("change", (e) => { clSort = e.target.value; render(); });
+      $("#cl-search").addEventListener("input", (e) => { clTerm = e.target.value.trim(); render(); });
+      $("#cl-list").addEventListener("click", (e) => {
+        const row = e.target.closest(".client-row");
+        if (!row) return;
+        const k = row.dataset.client;
+        if (openClients.has(k)) openClients.delete(k); else openClients.add(k);
+        render();
+      });
+      $("#cl-csv").addEventListener("click", () => {
+        const list = buildClients().filter((c) => clMode === "all" || c.isCustomer).sort((a, b) => b.spent - a.spent);
+        downloadCsv("led-clients-" + todayStr() + ".csv", [
+          ["Name", "Phone", "Email", "Vehicles", "Address", "Jobs completed", "Total spent", "Last visit", "Next job", "First contact"],
+          ...list.map((c) => [c.name, c.phone, c.email, c.vehicles.join("; "), c.location, c.done.length, c.spent, c.lastVisit, c.next ? c.next.apptDate : "", c.since ? ymd(c.since) : ""])
+        ]);
+      });
+
+      /* =====================================================
+         REVENUE
+         ===================================================== */
+      function periodRange(p) {
+        const n = new Date(), y = n.getFullYear(), m = n.getMonth();
+        if (p === "month") return [ymd(new Date(y, m, 1)), ymd(new Date(y, m + 1, 0))];
+        if (p === "lastmonth") return [ymd(new Date(y, m - 1, 1)), ymd(new Date(y, m, 0))];
+        if (p === "year") return [y + "-01-01", y + "-12-31"];
+        if (p === "lastyear") return [(y - 1) + "-01-01", (y - 1) + "-12-31"];
+        return ["0000-01-01", "9999-12-31"];
+      }
+      function periodLabel(p) {
+        const n = new Date();
+        if (p === "month") return n.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        if (p === "lastmonth") return new Date(n.getFullYear(), n.getMonth() - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        if (p === "year") return String(n.getFullYear());
+        if (p === "lastyear") return String(n.getFullYear() - 1);
+        return "All time";
+      }
+      // 12 bars: the calendar year for year views, otherwise the 12 months ending with the selected month.
+      function chartMonths() {
+        const n = new Date();
+        let ey = n.getFullYear(), em = n.getMonth();
+        if (period === "year") em = 11;
+        else if (period === "lastyear") { ey -= 1; em = 11; }
+        else if (period === "lastmonth") { const d = new Date(ey, em - 1, 1); ey = d.getFullYear(); em = d.getMonth(); }
+        const out = [];
+        for (let i = 11; i >= 0; i--) {
+          const d = new Date(ey, em - i, 1);
+          out.push({ d, key: d.getFullYear() + "-" + pad(d.getMonth() + 1) });
+        }
+        return out;
+      }
+      function niceMax(v) {
+        if (v <= 0) return 500;
+        const p = Math.pow(10, Math.floor(Math.log10(v)));
+        const f = v / p;
+        return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+      }
+
+      function renderRevenue() {
+        $("#rv-tabs").innerHTML = PERIODS.map(([k, label]) => `<button class="tab${period === k ? " on" : ""}" data-period="${k}" type="button">${label}</button>`).join("");
+        const [from, to] = periodRange(period);
+        const today = todayStr();
+        const done = leads.filter((l) => l.status === "completed");
+        const jobs = done.filter((l) => { const d = jobDate(l); return d >= from && d <= to; }).sort((a, b) => jobDate(b).localeCompare(jobDate(a)));
+        const total = sum(jobs, jobTotal);
+        const tips = sum(jobs, jobTip);
+        const ahead = leads.filter((l) => l.status === "booked" && (!isYmd(l.apptDate) || l.apptDate >= today))
+          .sort((a, b) => ((isYmd(a.apptDate) ? a.apptDate : "9999") + (a.apptTime || "")).localeCompare((isYmd(b.apptDate) ? b.apptDate : "9999") + (b.apptTime || "")));
+        const aheadVal = sum(ahead, (l) => jobPrice(l) || 0);
+
+        // KPI tiles
+        let html = `<div class="kpis">
+          <div class="card kpi"><span>Revenue</span><b>${money(total)}</b><small>${tips ? "incl. " + money(tips) + " in tips" : esc(periodLabel(period))}</small></div>
+          <div class="card kpi"><span>Jobs done</span><b>${jobs.length}</b><small>${esc(periodLabel(period))}</small></div>
+          <div class="card kpi"><span>Average job</span><b>${jobs.length ? money(Math.round(total / jobs.length)) : "—"}</b><small>incl. tips</small></div>
+          <div class="card kpi"><span>Booked ahead</span><b>${money(aheadVal)}</b><small>${ahead.length} upcoming ${ahead.length === 1 ? "job" : "jobs"}</small></div>
+        </div>`;
+
+        // Monthly bar chart
+        const months = chartMonths();
+        const byMonth = new Map(months.map((mo) => [mo.key, { v: 0, n: 0 }]));
+        done.forEach((l) => { const b = byMonth.get(jobDate(l).slice(0, 7)); if (b) { b.v += jobTotal(l); b.n++; } });
+        const vals = months.map((mo) => byMonth.get(mo.key));
+        const maxV = Math.max(0, ...vals.map((b) => b.v));
+        const top = niceMax(maxV);
+        const fromM = from.slice(0, 7), toM = to.slice(0, 7);
+        const thisM = today.slice(0, 7);
+        const maxIdx = maxV > 0 ? vals.findIndex((b) => b.v === maxV) : -1;
+        const focusIdx = period === "month" || period === "lastmonth" ? months.findIndex((mo) => mo.key === fromM) : -1;
+        const range = months[0].d.toLocaleDateString(undefined, { month: "short", year: "numeric" }) + " – " + months[11].d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+        html += `<div class="card panel">
+          <div class="panel-head"><h3>Revenue by month</h3><span class="sub">${esc(range)}</span></div>
+          <div class="chart" id="rv-chart">
+            ${[1, 0.5, 0].map((f) => `<div class="gl${f === 0 ? " base" : ""}" style="top:${(1 - f) * 100}%"><span>${moneyShort(top * f)}</span></div>`).join("")}
+            <div class="bars">${months.map((mo, i) => {
+              const b = vals[i];
+              const on = period === "all" || (mo.key >= fromM && mo.key <= toM);
+              const h = (b.v / top) * 100;
+              const showVal = b.v > 0 && (i === maxIdx || i === focusIdx);
+              const tipText = mo.d.toLocaleDateString(undefined, { month: "long", year: "numeric" }) + " · " + money(b.v) + " · " + b.n + (b.n === 1 ? " job" : " jobs");
+              return `<div class="bcol${on ? "" : " off"}" tabindex="0" data-tip="${esc(tipText)}" aria-label="${esc(tipText)}">
+                <div class="bar" style="height:${h}%"></div>
+                ${showVal ? `<span class="bval${i === focusIdx || (focusIdx < 0 && i === maxIdx) ? " keep" : ""}" style="bottom:calc(${h}% + 4px)">${moneyShort(b.v)}</span>` : ""}
+              </div>`;
+            }).join("")}</div>
+            ${maxV === 0 ? `<div class="chart-empty">No completed jobs in these months yet</div>` : ""}
+          </div>
+          <div class="blabels">${months.map((mo) => {
+            const l = mo.d.toLocaleDateString(undefined, { month: "short" });
+            return `<span class="${mo.key === thisM ? "on" : ""}"><span class="bl-l">${esc(l)}</span><span class="bl-s">${esc(l[0])}</span></span>`;
+          }).join("")}</div>
+        </div>`;
+
+        // By package + coming up
+        const byPkg = new Map();
+        jobs.forEach((l) => { const k = pkgName(l.service) || "No package set"; const o = byPkg.get(k) || { n: 0, v: 0 }; o.n++; o.v += jobTotal(l); byPkg.set(k, o); });
+        const pkgs = [...byPkg.entries()].sort((a, b) => b[1].v - a[1].v);
+        const pmax = Math.max(1, ...pkgs.map(([, o]) => o.v));
+        html += `<div class="grid2">
+          <div class="card panel">
+            <div class="panel-head"><h3>By package</h3><span class="sub">${esc(periodLabel(period))}</span></div>
+            ${pkgs.length ? pkgs.map(([k, o]) => `<div class="hbar">
+              <div class="hb-top"><span>${esc(k)}</span><span><b>${money(o.v)}</b> · ${o.n} ${o.n === 1 ? "job" : "jobs"}</span></div>
+              <div class="hb-track"><div class="hb-fill" style="width:${(o.v / pmax) * 100}%"></div></div>
+            </div>`).join("") : `<p class="sub">No completed jobs in this period.</p>`}
+          </div>
+          <div class="card panel">
+            <div class="panel-head"><h3>Coming up</h3><span class="sub">${money(aheadVal)} booked</span></div>
+            ${ahead.length ? `<div class="uplist">${ahead.slice(0, 6).map((l) => `<div>
+              <span class="d">${isYmd(l.apptDate) ? esc(niceDate(l.apptDate)) : "No date"}</span>
+              <span class="n"><button class="linkbtn" style="color:var(--ink);font-size:inherit" type="button" data-edit="${esc(l.id)}">${esc(l.name)}</button>${l.service ? ` <span class="muted">· ${esc(pkgName(l.service))}</span>` : ""}</span>
+              <span class="v">${jobPrice(l) != null ? money(jobPrice(l)) : `<span class="muted">—</span>`}</span>
+            </div>`).join("")}${ahead.length > 6 ? `<a class="sub" href="#calendar">+${ahead.length - 6} more on the calendar</a>` : ""}</div>` : `<p class="sub">Nothing booked yet.</p>`}
+          </div>
+        </div>`;
+
+        // Completed jobs table
+        const est = jobs.filter((l) => !hasPrice(l) && packagePrice(l.service) != null).length;
+        const missing = jobs.filter((l) => jobPrice(l) == null).length;
+        html += `<div class="card panel">
+          <div class="panel-head"><h3>Completed jobs</h3><span class="sub">${jobs.length} in ${esc(periodLabel(period).toLowerCase() === "all time" ? "total" : periodLabel(period))}</span></div>
+          ${jobs.length ? `<div class="tbl-wrap"><table>
+            <thead><tr><th>Date</th><th>Client</th><th>Package</th><th>Vehicle</th><th class="r">Price</th><th class="r">Tip</th><th class="r">Total</th></tr></thead>
+            <tbody>${jobs.map((l) => {
+              const p = jobPrice(l);
+              return `<tr data-edit="${esc(l.id)}">
+                <td>${esc(shortDate(jobDate(l)))}</td>
+                <td><button class="linkbtn" type="button" data-edit="${esc(l.id)}">${esc(l.name)}</button></td>
+                <td>${esc(pkgName(l.service) || "—")}</td>
+                <td>${esc(l.vehicle || "—")}</td>
+                <td class="r">${p == null ? `<span class="est">no price</span>` : money(p) + (hasPrice(l) ? "" : `<span class="est">est.</span>`)}</td>
+                <td class="r">${jobTip(l) ? money(jobTip(l)) : `<span class="muted">—</span>`}</td>
+                <td class="r"><b>${money(jobTotal(l))}</b></td>
+              </tr>`;
+            }).join("")}</tbody>
+          </table></div>` : `<p class="sub">No completed jobs in this period. When you set a lead to Completed, it's counted here.</p>`}
+          ${est ? `<p class="note"><b>est.</b> means no price was entered, so the package price is used. Tap the job to enter what you actually charged.</p>` : ""}
+          ${missing ? `<p class="note"><b>no price</b>: ${missing} ${missing === 1 ? "job has" : "jobs have"} no price or package, so ${missing === 1 ? "it counts" : "they count"} as $0. Tap to add one.</p>` : ""}
+        </div>`;
+
+        $("#rv-body").innerHTML = html;
+      }
+
+      $("#rv-tabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) { period = b.dataset.period; hideTip(); render(); } });
+      $("#rv-csv").addEventListener("click", () => {
+        const [from, to] = periodRange(period);
+        const jobs = leads.filter((l) => l.status === "completed" && jobDate(l) >= from && jobDate(l) <= to).sort((a, b) => jobDate(a).localeCompare(jobDate(b)));
+        downloadCsv("led-revenue-" + periodLabel(period).toLowerCase().replace(/\s+/g, "-") + ".csv", [
+          ["Date", "Client", "Phone", "Vehicle", "Package", "Price", "Tip", "Total", "Price entered?"],
+          ...jobs.map((l) => [jobDate(l), l.name, l.phone, l.vehicle, l.service, jobPrice(l) ?? "", jobTip(l), jobTotal(l), hasPrice(l) ? "yes" : "no (package price)"]),
+          [],
+          ["", "", "", "", "Total", sum(jobs, (l) => jobPrice(l) || 0), sum(jobs, jobTip), sum(jobs, jobTotal), ""]
+        ]);
+      });
+
+      // Bar tooltips (hover, keyboard focus, or tap)
+      const tip = $("#tip");
+      function showTip(col) {
+        tip.textContent = col.dataset.tip;
+        tip.classList.remove("hidden");
+        const r = col.getBoundingClientRect();
+        const bar = col.querySelector(".bar").getBoundingClientRect();
+        const w = tip.offsetWidth, h = tip.offsetHeight;
+        const x = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 8));
+        const y = Math.max(8, Math.min(bar.top, r.bottom) - h - 8);
+        tip.style.left = x + "px";
+        tip.style.top = y + "px";
+      }
+      function hideTip() { tip.classList.add("hidden"); }
+      $("#rv-body").addEventListener("mouseover", (e) => { const c = e.target.closest(".bcol"); if (c) showTip(c); });
+      $("#rv-body").addEventListener("mouseout", (e) => { const c = e.target.closest(".bcol"); if (c && !c.contains(e.relatedTarget)) hideTip(); });
+      $("#rv-body").addEventListener("focusin", (e) => { const c = e.target.closest(".bcol"); if (c) showTip(c); });
+      $("#rv-body").addEventListener("focusout", (e) => { if (e.target.closest(".bcol")) hideTip(); });
+      $("#rv-body").addEventListener("click", (e) => { const c = e.target.closest(".bcol"); if (c) showTip(c); });
+      window.addEventListener("scroll", hideTip, { passive: true });
+
+      /* =====================================================
+         ADD / EDIT DIALOG (shared by every section)
+         ===================================================== */
+      const dlg = $("#job-dialog");
+      const jf = $("#job-form");
+      let editingId = null;
+
+      function updatePricePlaceholder() {
+        const pp = packagePrice(jf.elements.service.value);
+        jf.elements.price.placeholder = pp != null ? String(pp) : "0";
+      }
+      jf.elements.service.addEventListener("change", updatePricePlaceholder);
+
+      function openJob(lead, preset) {
+        jf.reset();
+        $("#job-err").textContent = "";
+        editingId = lead ? lead.id : null;
+        const v = lead || preset || {};
+        const set = (k, val) => { jf.elements[k].value = val == null ? "" : val; };
+        ["name", "phone", "email", "vehicle", "location", "notes", "apptTime"].forEach((k) => set(k, v[k]));
+        set("date", isYmd(v.date) ? v.date : "");
+        set("apptDate", isYmd(v.apptDate) ? v.apptDate : "");
+        const svc = jf.elements.service;
+        svc.querySelectorAll("option[data-custom]").forEach((o) => o.remove());
+        if (v.service && ![...svc.options].some((o) => o.value === v.service)) {
+          const o = new Option(v.service, v.service);
+          o.dataset.custom = "1";
+          svc.add(o);
+        }
+        svc.value = v.service || "";
+        set("status", v.status || "new");
+        set("price", typeof v.price === "number" ? v.price : "");
+        set("tip", typeof v.tip === "number" ? v.tip : "");
+        updatePricePlaceholder();
+
+        $("#job-title").textContent = lead ? (lead.name || "Lead") :
+          preset && preset.name ? "New job for " + preset.name :
+          preset && preset.apptDate ? "Book " + niceDate(preset.apptDate, { weekday: "long", month: "short", day: "numeric" }) : "Add a lead";
+        const meta = lead ? [
+          (lead.source === "website" ? "Website request" : "Added by hand") + (ago(lead.createdAt) ? " · " + ago(lead.createdAt) : ""),
+          lead.size ? "Size: " + lead.size : "",
+          lead.message ? "“" + lead.message + "”" : ""
+        ].filter(Boolean).join(" · ") : "";
+        $("#job-meta").textContent = meta;
+        $("#job-save").textContent = lead ? "Save changes" : "Save";
+        $("#job-del").classList.toggle("hidden", !lead);
+        dlg.showModal();
+        if (!lead && !(preset && preset.name)) jf.elements.name.focus();
+      }
+
+      $("#add-btn").addEventListener("click", () => openJob(null, null));
+      $("#job-cancel").addEventListener("click", () => dlg.close());
+      $("#job-del").addEventListener("click", async () => {
+        if (editingId && await deleteLead(editingId)) dlg.close();
+      });
+
+      jf.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = new FormData(jf);
+        const get = (k) => String(f.get(k) || "").trim();
+        const price = parseMoney(get("price"));
+        const tipAmt = parseMoney(get("tip"));
+        if (Number.isNaN(price) || Number.isNaN(tipAmt)) { $("#job-err").textContent = "Price and tip should be plain numbers, like 140."; return; }
+        let data = {
+          name: get("name"), phone: get("phone"), email: get("email"), vehicle: get("vehicle"), service: get("service"),
+          date: get("date"), location: get("location"), notes: get("notes"), status: get("status") || "new",
+          apptDate: get("apptDate"), apptTime: get("apptDate") ? get("apptTime") : "", price, tip: tipAmt
+        };
+        data = { ...data, ...withDefaults({}, data) };
+        const btn = $("#job-save");
+        btn.disabled = true;
+        try {
+          if (editingId) {
+            await updateDoc(doc(db, "leads", editingId), { ...data, updatedAt: serverTimestamp() });
+          } else {
+            await addDoc(leadsRef, { ...data, message: "", size: "", source: "manual", createdAt: serverTimestamp() });
+            if (view === "leads") filter = data.status;
+            if (view === "calendar" && isYmd(data.apptDate)) calSel = data.apptDate;
+          }
+          dlg.close();
+          render();
+        } catch (err) {
+          $("#job-err").textContent = "Couldn't save: " + (err.code || err.message);
+        }
+        btn.disabled = false;
+      });
+
+      /* ---------- Buttons that appear in several sections ---------- */
+      document.addEventListener("click", (e) => {
+        const ed = e.target.closest("[data-edit]");
+        if (ed && !e.target.closest("[data-del]")) {
+          const l = leads.find((x) => x.id === ed.dataset.edit);
+          if (l) openJob(l);
+          return;
+        }
+        const bk = e.target.closest("[data-book]");
+        if (bk) { openJob(null, { status: "booked", apptDate: bk.dataset.book }); return; }
+        const nj = e.target.closest("[data-newjob]");
+        if (nj) {
+          const c = clients.find((x) => x.key === nj.dataset.newjob);
+          if (c) openJob(null, { name: c.name, phone: c.phone, email: c.email, vehicle: c.vehicles[0] || "", location: c.location, status: "booked", service: (c.done[0] || c.jobs[0] || {}).service || "" });
+          return;
+        }
+        const gt = e.target.closest("[data-goto]");
+        if (gt) { filter = gt.dataset.goto; if (view === "leads") render(); else location.hash = "#leads"; return; }
+        if (!e.target.closest(".bcol")) hideTip();
+      });
+
+      route();
+      // Keep "5 min ago" labels and today's date fresh.
+      setInterval(() => { if (leads.length) render(); }, 60000);
+    }
+  </script>
+</body>
+</html>
