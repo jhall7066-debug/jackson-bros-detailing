@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// Jackson Bros CRM: paste this whole file into
+// Firebase console → Firestore Database → Rules, then click Publish.
+//
+// - Anyone (the website form) can ADD a lead, but only with the expected fields.
+// - Only the emails listed in isOwner() can see, edit or delete leads.
+//   Add more logins by adding their email (lowercase) to the list.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'brosjackson75@gmail.com',
+          'jhall7066@gmail.com'
+        ];
+    }
+
+    function text(field, max) {
+      return !(field in request.resource.data)
+        || (request.resource.data[field] is string && request.resource.data[field].size() <= max);
+    }
+
+    function validWebsiteLead() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['name', 'phone', 'email', 'vehicle', 'size', 'service', 'date',
+                               'location', 'message', 'status', 'notes', 'source', 'createdAt'])
+        && d.keys().hasAll(['name', 'phone', 'status', 'source', 'createdAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && d.phone is string && d.phone.size() > 0 && d.phone.size() <= 30
+        && text('email', 120)
+        && text('vehicle', 100) && text('size', 60) && text('service', 80)
+        && text('date', 20) && text('location', 200) && text('message', 2000)
+        && d.status == 'new'
+        && d.notes == ''
+        && d.source == 'website'
+        && d.createdAt == request.time;
+    }
+
+    match /leads/{leadId} {
+      allow create: if isOwner() || validWebsiteLead();
+      allow read, update, delete: if isOwner();
+    }
+
+    // Everything else is locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

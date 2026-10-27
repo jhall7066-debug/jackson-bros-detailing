@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /crm/
+Disallow: /thank-you
+
+Sitemap: https://www.jacksonbrosdetail.com/sitemap.xml
